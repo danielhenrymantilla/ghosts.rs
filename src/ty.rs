@@ -14,19 +14,9 @@
 
 use crate::vestibule::*;
 
-/** ```rust
-use ::ghosts::Ghost;
-
-let _: Ghost<()> = Ghost;
-``` */
-// type-namespace `Ghost`.
-pub type Ghost<T /* : ?Sized */> = ghost::Ghost<::core::marker::PhantomData<T>>;
-
-pub use ghost::* /* value-namespace `Ghost` */;
+pub use ghost::*; // value-namespace `Ghost`
 pub mod ghost {
     #![allow(unreachable_code)]
-
-    pub use self::Ghost::*;
 
     #[derive(
         Debug,
@@ -42,7 +32,26 @@ pub mod ghost {
         #[doc(hidden)]
         __(::never_say_never::Never, T),
     }
+
+    pub use self::Ghost::*;
 }
+
+/// The type of [`ghost!`] expressions.
+///
+/// Guaranteed to be a zero-cost ZST token you can pass around in functions and
+/// embed in data structures with no runtime impact whatsoever.
+///
+/// Similar to a `PhantomData`, it can be directly instanced as a unit struct.
+///
+/** ```rust
+use ::ghosts::Ghost;
+
+let _: Ghost<()> = Ghost;
+``` */
+pub
+type Ghost<T /* : ?Sized */> = // type-namespace `Ghost`.
+    ghost::Ghost<::core::marker::PhantomData<T>>
+;
 
 impl<T> Ghost<T> {
     /// Nudge type-inference.
@@ -70,27 +79,27 @@ impl<T : ?Sized> Ghost<T> {
     pub
     fn map<U> (
         self: Ghost<T>,
-        f: Ghost<impl FnOnce(T, GhostContext) -> U>,
+        f: Ghost<impl FnOnce(T, Ectoplasm) -> U>,
     ) -> Ghost<U>
     where
         T : Sized,
     {
-        ghost!({
-            raise!(f)(raise!(self), raise!(Ghost))
-        })
+        ghost!(
+            materialize!(f)(materialize!(self), materialize!(Ghost))
+        )
     }
 
     #[inline]
     pub
     fn and_then<U> (
         self: Ghost<T>,
-        f: Ghost<impl FnOnce(T, GhostContext) -> Ghost<U>>,
+        f: Ghost<impl FnOnce(T, Ectoplasm) -> Ghost<U>>,
     ) -> Ghost<U>
     where
         T : Sized,
     {
-        ghost!({
-            raise!(f)(raise!(self), raise!(Ghost))
-        }) // auto-squashed ectoplasm.
+        ghost!(
+            materialize!(f)(materialize!(self), materialize!(Ghost))
+        ) // auto-squashed ectoplasm.
     }
 }

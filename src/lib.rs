@@ -1,6 +1,6 @@
 #![doc = include_str!("../README.md")]
 #![cfg_attr(feature = "better-docs", feature(
-    doc_cfg, doc_keyword,
+    doc_cfg, rustdoc_internals,
 ))]
 #![doc(html_logo_url = "https://user-images.githubusercontent.com/9920355/166294360-9ee4ec3d-685c-49e5-b006-1e9077f8cc01.png")]
 #![deny(rustdoc::private_intra_doc_links)]
@@ -15,10 +15,12 @@ mod vestibule {
     #[doc(no_inline)]
     pub use {
         crate::{
-            ghost,
+            Ectoplasm,
+            ectoplasm,
             Ghost,
-            GhostContext,
-            // raise,
+            ghost,
+            materialize_return,
+            // materialize,
         },
     };
 }
@@ -86,5 +88,3 @@ mod _compile_fail_tests {}
 #[doc(inline)]
 pub use ty::Ghost;
 mod ty;
-// // Use an `include!`
-// include!("ty/fns.rs");

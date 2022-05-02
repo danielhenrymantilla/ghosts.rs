@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "ghosts"
-version = "0.1.0-rc1"
+version = "0.1.0-rc2"
 dependencies = [
  "ghosts-proc_macros",
  "never-say-never",
@@ -12,7 +12,7 @@ dependencies = [
 
 [[package]]
 name = "ghosts-proc_macros"
-version = "0.1.0-rc1"
+version = "0.1.0-rc2"
 
 [[package]]
 name = "never-say-never"
