@@ -1,9 +1,9 @@
 # The following snippets fail to compile
 
 ```rust ,compile_fail
-use ::ghost_exprs::*;
+use ::ghosts::vestibule::*;
 
-/* todo */
+let _: ::never_say_never::Never = ::ghosts::raise(Ghost);
 ```
 
 <!-- Templated by `cargo-generate` using https://github.com/danielhenrymantilla/proc-macro-template -->

@@ -1,6 +1,6 @@
 # Templated by `cargo-generate` using https://github.com/danielhenrymantilla/proc-macro-template
 [package]
-name = "ghost-exprs"
+name = "ghosts"
 authors = [
     "Daniel Henry-Mantilla <daniel.henry.mantilla@gmail.com>",
 ]
@@ -8,22 +8,33 @@ version = "0.1.0-rc1"  # Keep in sync
 edition = "2018"
 
 license = "Zlib OR MIT OR Apache-2.0"
-repository = "https://github.com/danielhenrymantilla/ghost-exprs.rs"
-documentation = "https://docs.rs/ghost-exprs"
+repository = "https://github.com/danielhenrymantilla/ghosts.rs"
+documentation = "https://docs.rs/ghosts"
 readme = "README.md"
 
-# description = "…"
+rust-version = "1.56.0"
+
+description = "Type-check non-existing `Phantom` code for Fun And Profit™."
 # keywords = []
 
 [features]
-better-docs = []  # allowed to break MSRV
+better-docs = [
+]
 ui-tests = ["better-docs"]
 
 [dependencies]
+never-say-never.version = "6.6.666"
+
+[dependencies.ghosts-proc_macros]
+path = "src/proc_macros"
+version = "0.1.0-rc1"  # Keep in sync
 
 [dev-dependencies]
 
 [workspace]
+members = [
+    "src/proc_macros",
+]
 
 [package.metadata.docs.rs]
 all-features = true
