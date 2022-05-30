@@ -25,9 +25,10 @@ mod vestibule {
     };
 }
 
-#[doc(cfg(ghostǃ))]
-#[cfg(feature = "better-docs")]
-#[doc(keyword = "no_init")]
+#[cfg_attr(feature = "better-docs",
+    doc(cfg(ghostǃ)),
+    doc(keyword = "no_init"),
+)]
 /// Use `#[no_init]` inside a [`ghost!`] block to opt out of consuming
 /// ownership of outside captures.
 ///
@@ -38,13 +39,33 @@ let owned = String::from("…");
 let casper = ghost!(#[no_init] {
     owned
 });
-drop(owned); // Ok
+drop(owned); // OK
 ``` */
-mod ghost_tag {}
+mod ghost_no_init {}
 
-#[doc(cfg(ghostǃ))]
-#[cfg(feature = "better-docs")]
-#[doc(keyword = "tag")]
+#[cfg_attr(feature = "better-docs",
+    doc(cfg(ghostǃ)),
+    doc(keyword = "no_dropck"),
+)]
+/// Use `#[no_dropck]` inside a [`ghost!`] block to opt out of all the move
+/// semantics altogether inside a `ghost!` block (it thus implies `#[no_init]`).
+///
+/** ```rust
+use ::ghosts::vestibule::*;
+
+let owned = String::from("…");
+let casper = ghost!(#[no_dropck] {
+    drop(owned);
+    drop(owned); // OK, move semantics are no longer involved.
+});
+drop(owned); // OK as well: `no_dropck` "implies `no_init`".
+``` */
+mod ghost_no_dropck {}
+
+#[cfg_attr(feature = "better-docs",
+    doc(cfg(ghostǃ)),
+    doc(keyword = "tag"),
+)]
 /// Use `#[tag]` to accept **and discard** extra attribute metadata.
 ///
 /// May be useful for [tool attributes](
@@ -57,7 +78,7 @@ let casper = ghost!(#[tag(my_tool::my_annotation)] {
     drop("this is fine");
 });
 ``` */
-mod ghost_no_init {}
+mod ghost_tag {}
 
 pub use expr::*;
 mod expr;

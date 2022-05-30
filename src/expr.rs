@@ -16,22 +16,28 @@ use crate::vestibule::*;
 ///   - When directly inside a [`ghost!`] block, use [`materialize!`].
 ///
 ///   - Otherwise, require that the caller pass some [`Ectoplasm`],
-///     which they can have by [`materialize()`]-ing their own
+///     which they can have by [`materialize!`]-ing their own
 ///     <code>[Ghost]&lt;[Ectoplasm]&gt;</code>.
+///
+///       - You can also get hold of some
+///         <code>[Ghost]&lt;[Ectoplasm]&gt;</code> by using the
+///         [closure syntax] when constructing [`ghost!`]s.
 ///
 ///     With it, you'll have access to its impossible to misuse
 ///     [`.materialize()`][Ectoplasm::materialize] method.
 ///
 ///   - Or perhaps way more simply, consider using the [`.map()`][Ghost] or
 ///     [`.and_then()`][Ghost] adapters.
+///
+/// [closure syntax]: crate::ghost!#examples
 pub
-fn materialize<T> (
+fn materialize_unchecked<T> (
     _: Ghost<T>,
 ) -> T
 {
     #![allow(unconditional_recursion)]
-    struct MaterializeOutsideOfAGhostBlockError(u8);
-    materialize::<(T, MaterializeOutsideOfAGhostBlockError)>(Ghost).0
+    struct OutsideOfAGhostBlockError(u8);
+    materialize_unchecked::<(T, OutsideOfAGhostBlockError)>(Ghost).0
 }
 
 pub use __::Ectoplasm;
@@ -62,8 +68,8 @@ mod __ {
 }
 
 impl Ectoplasm {
-    /// Equivalent to [`materialize()`], but for it being impossible to
-    /// misuse.
+    /// Equivalent to [`materialize_unchecked()`], but for it being impossible
+    /// to misuse.
     ///
     /** ```rust
     use ::ghosts::vestibule::*;
@@ -140,7 +146,24 @@ pub mod docsrs_y_u_do_dis {
 ///
 /// See [the main docs][crate] for more info.
 ///
-/// # Examples
+/// ### Closure syntax
+///
+/// While you can directly do `let x: Ghost<i32> = ghost!(42);` to create a
+/// [`Ghost`] expression, you may sometimes need access to [`Ectoplasm`] (the
+/// token that proves you are indeed inside a `ghost!` context), mainly to
+/// safely [`.materialize()`][`Ectoplasm::materialize`] some values from within
+/// some helper function.
+///
+/// In that case, you can use a `|ectoplasm| …` closure syntax to automagically
+/// get a `ectoplasm` instance of type [`Ectoplasm`]:
+///
+/**  - ```rust
+    use ::ghosts::vestibule::*;
+
+    let g: Ghost<i32> = ghost!(|_ectoplasm| 42);
+    ``` */
+///
+/// ## Examples
 ///
 /// ### `?` and `.await` work inside it.
 ///
@@ -168,14 +191,14 @@ fn example ()
 }
 ``` */
 ///
-/// ### `break` and `continue` work inside it, provided they be labelled.
+/// ### `break` and `continue` work inside it (labelled and unlabelled):
 ///
 /** ```rust
 use ::ghosts::vestibule::*;
 
-let _: i32 = 'labelled: loop {
+let _: i32 = loop {
     let casper = ghost!({
-        break 'labelled 42;
+        break 42;
     });
     break 0;
 };
@@ -193,7 +216,7 @@ drop(owned); // Error, use of moved value
 ///
 ///   - (note: once in the Ghost Realm™, things stay there. There is no way for
 ///     ownership relinquished over the Ghost Realm™ to ever be claimed back
-///     outside of it)
+///     outside it)
 ///
 /// ### … unless the `#[no_init]` opt-out is used
 ///
@@ -219,6 +242,7 @@ macro_rules! ghost {
     (
         $( #[tag($meta:meta)] )?
         $( #[no_init] )?
+        $( #[no_dropck] )?
         $( |$ghost_ctx:pat| )?
         $expr_or_block:expr
     ) => (
@@ -237,6 +261,19 @@ macro_rules! ඞ__ghost {
         $crate::ඞ__ghost! {
             $normal_attrs
             [no_init true]
+            $($rest)*
+        }
+    );
+
+    (
+        $normal_attrs:tt
+        $no_init:tt
+        #[no_dropck]
+        $($rest:tt)*
+    ) => (
+        $crate::ඞ__ghost! {
+            $normal_attrs
+            [no_init no_dropck]
             $($rest)*
         }
     );
@@ -279,21 +316,28 @@ macro_rules! ඞ__ghost {
         [no_init
             $(false)?
             $(true $(if $no_init:tt)?)?
+            $(no_dropck $(if $no_dropck:tt)?)?
         ]
         |$ghost_ctx:pat_param| $expr_or_block:expr
     ) => ({
         let it = $crate::Ghost;
+        #[allow(unreachable_code)]
         if false {
+            #[allow(unused_macros)]
             macro_rules! materialize {
                 ( $e:expr , ) => ( materialize!($e) );
                 ( $e:expr ) => (
-                    $crate::materialize(
+                    $crate::materialize_unchecked(
                         $($attrs)*
                         $e
                     )
                 );
             }
             let $ghost_ctx = $crate::ectoplasm!();
+            $($(if $no_dropck)?
+                loop {}
+            )?
+            #[warn(unreachable_code)]
             it.__set($expr_or_block);
             $($(if $no_init)?
                 loop {}
@@ -309,21 +353,31 @@ macro_rules! ඞ__ghost {
         [no_init
             $(false)?
             $(true $(if $no_init:tt)?)?
+            $(no_dropck $(if $no_dropck:tt)?)?
         ]
         $expr_or_block:expr
     ) => ({
         let it = $crate::Ghost;
+        #[allow(unreachable_code)]
         if false {
+            #[allow(unused_macros)]
             macro_rules! materialize {
                 ( $e:expr , ) => ( materialize!($e) );
                 ( $e:expr ) => (
-                    $crate::materialize(
+                    $crate::materialize_unchecked(
                         $($attrs)*
                         $e
                     )
                 );
             }
+            $($(if $no_dropck)?
+                loop {}
+            )?
+            #[warn(unreachable_code)]
             it.__set($expr_or_block);
+            $($(if $no_init)?
+                loop {}
+            )?
             $($(if $no_init)?
                 loop {}
             )?
