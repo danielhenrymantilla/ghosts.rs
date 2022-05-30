@@ -18,9 +18,8 @@ description = "Type-check non-existing `Phantom` code for Fun And Profit™."
 # keywords = []
 
 [features]
-better-docs = [
-]
-ui-tests = ["better-docs"]
+better-docs = []  # requires nightly
+ui-tests = []
 
 [dependencies]
 never-say-never.version = "6.6.666"
@@ -37,7 +36,7 @@ members = [
 ]
 
 [package.metadata.docs.rs]
-all-features = true
+features = ["better-docs"]
 rustdoc-args = [
     "--html-before-content", "fix-docsrs-li-details-summary.html",
 ]
