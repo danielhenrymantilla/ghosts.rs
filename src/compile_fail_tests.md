@@ -3,7 +3,7 @@
 ```rust ,compile_fail
 use ::ghosts::vestibule::*;
 
-let _: ::never_say_never::Never = ::ghosts::materialize(Ghost);
+let _: ::never_say_never::Never = ::ghosts::materialize_unchecked(Ghost);
 ```
 
 <!-- Templated by `cargo-generate` using https://github.com/danielhenrymantilla/proc-macro-template -->

@@ -25,39 +25,60 @@ mod vestibule {
     };
 }
 
-#[doc(cfg(ghostǃ))]
-#[cfg(feature = "better-docs")]
-#[doc(keyword = "no_init")]
+#[cfg_attr(feature = "better-docs",
+    doc(cfg(ghostǃ)),
+    doc(keyword = "no_init"),
+)]
 /// Use `#[no_init]` inside a [`ghost!`] block to opt out of consuming
 /// ownership of outside captures.
 ///
-/** ```rust
-use ::ghosts::vestibule::*;
+/**  - ```rust
+    use ::ghosts::vestibule::*;
 
-let owned = String::from("…");
-let casper = ghost!(#[no_init] {
-    owned
-});
-drop(owned); // Ok
-``` */
-mod ghost_tag {}
+    let owned = String::from("…");
+    let casper = ghost!(#[no_init] {
+        owned
+    });
+    drop(owned); // OK
+    ``` */
+mod ghost_no_init {}
 
-#[doc(cfg(ghostǃ))]
-#[cfg(feature = "better-docs")]
-#[doc(keyword = "tag")]
+#[cfg_attr(feature = "better-docs",
+    doc(cfg(ghostǃ)),
+    doc(keyword = "no_dropck"),
+)]
+/// Use `#[no_dropck]` inside a [`ghost!`] block to opt out of all the move
+/// semantics altogether inside a `ghost!` block (it thus implies `#[no_init]`).
+///
+/**  - ```rust
+    use ::ghosts::vestibule::*;
+
+    let owned = String::from("…");
+    let casper = ghost!(#[no_dropck] {
+        drop(owned);
+        drop(owned); // OK, move semantics are no longer involved.
+    });
+    drop(owned); // OK as well: `no_dropck` "implies `no_init`".
+    ``` */
+mod ghost_no_dropck {}
+
+#[cfg_attr(feature = "better-docs",
+    doc(cfg(ghostǃ)),
+    doc(keyword = "tag"),
+)]
 /// Use `#[tag]` to accept **and discard** extra attribute metadata.
 ///
 /// May be useful for [tool attributes](
 /// https://doc.rust-lang.org/1.60.0/reference/attributes.html#tool-attributes).
 ///
-/** ```rust
-use ::ghosts::vestibule::*;
+/**  - ```rust
+    use ::ghosts::vestibule::*;
 
-let casper = ghost!(#[tag(my_tool::my_annotation)] {
-    drop("this is fine");
-});
-``` */
-mod ghost_no_init {}
+    let casper = ghost!(#[tag(my_tool::my_annotation)] {
+        drop("this is fine");
+    });
+    ``` */
+mod ghost_tag {}
 
 pub use expr::*;
 mod expr;

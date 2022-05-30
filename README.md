@@ -80,7 +80,6 @@ fn lemma_fibo_is_monotonic (
         | _case if i < 2 && j < 2 => {},
         | _case if i == j => {},
         | _case if i == j - 1 => {
-            // reveal_with_fuel(fibo, 2);
             lemma_fibo_is_monotonic(ghost_ctx, ghost!(i), ghost!(j - 1));
         },
         | _default => {

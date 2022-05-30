@@ -4,7 +4,7 @@ name = "ghosts"
 authors = [
     "Daniel Henry-Mantilla <daniel.henry.mantilla@gmail.com>",
 ]
-version = "0.1.0-rc2"  # Keep in sync
+version = "0.1.0"  # Keep in sync
 edition = "2018"
 
 license = "Zlib OR MIT OR Apache-2.0"
@@ -18,16 +18,15 @@ description = "Type-check non-existing `Phantom` code for Fun And Profit™."
 # keywords = []
 
 [features]
-better-docs = [
-]
-ui-tests = ["better-docs"]
+better-docs = []  # requires nightly
+ui-tests = []
 
 [dependencies]
 never-say-never.version = "6.6.666"
 
 [dependencies.ghosts-proc_macros]
 path = "src/proc_macros"
-version = "0.1.0-rc2"  # Keep in sync
+version = "0.1.0"  # Keep in sync
 
 [dev-dependencies]
 
@@ -37,7 +36,7 @@ members = [
 ]
 
 [package.metadata.docs.rs]
-all-features = true
+features = ["better-docs"]
 rustdoc-args = [
     "--html-before-content", "fix-docsrs-li-details-summary.html",
 ]
