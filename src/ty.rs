@@ -43,11 +43,11 @@ pub mod ghost {
 ///
 /// Similar to a `PhantomData`, it can be directly instanced as a unit struct.
 ///
-/** ```rust
-use ::ghosts::Ghost;
+/**  - ```rust
+    use ::ghosts::Ghost;
 
-let _: Ghost<()> = Ghost;
-``` */
+    let _: Ghost<()> = Ghost;
+    ``` */
 pub
 type Ghost<T /* : ?Sized */> = // type-namespace `Ghost`.
     ghost::Ghost<::core::marker::PhantomData<T>>

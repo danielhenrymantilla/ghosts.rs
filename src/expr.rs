@@ -54,7 +54,7 @@ mod __ {
     /// This provides an impossible to misuse
     /// [`.materialize()`][Self::materialize] method.
     ///
-    /** ```rust
+    /**  - ```rust
     use ::ghosts::vestibule::*;
 
     let casper = ghost!({
@@ -71,7 +71,7 @@ impl Ectoplasm {
     /// Equivalent to [`materialize_unchecked()`], but for it being impossible
     /// to misuse.
     ///
-    /** ```rust
+    /**  - ```rust
     use ::ghosts::vestibule::*;
 
     fn ghost_ok_or<T, Err> (
@@ -110,18 +110,18 @@ impl Ectoplasm {
 ///
 /// This macro does not really exist; it's **only available when inside a
 /// [`ghost!`] block**.
-/** ```rust
-use ::ghosts::vestibule::*;
+/**  - ```rust
+    use ::ghosts::vestibule::*;
 
-fn wrap_in_some<T> (g: Ghost<T>)
-  -> Ghost<Option<T>>
-{
-    ghost!({
-        let it: T = materialize!(g);
-        Some(it)
-    })
-}
-``` */
+    fn wrap_in_some<T> (g: Ghost<T>)
+      -> Ghost<Option<T>>
+    {
+        ghost!({
+            let it: T = materialize!(g);
+            Some(it)
+        })
+    }
+    ``` */
 ///
 ///   - (note that for this example, `.map()` could have been used instead)
 #[macro_export]
@@ -146,6 +146,10 @@ pub mod docsrs_y_u_do_dis {
 ///
 /// See [the main docs][crate] for more info.
 ///
+/// ### Macro attributes
+///
+/// See [the Keywords section][crate#keywords].
+///
 /// ### Closure syntax
 ///
 /// While you can directly do `let x: Ghost<i32> = ghost!(42);` to create a
@@ -167,52 +171,52 @@ pub mod docsrs_y_u_do_dis {
 ///
 /// ### `?` and `.await` work inside it.
 ///
-/** ```rust
-use ::ghosts::vestibule::*;
+/**  - ```rust
+    use ::ghosts::vestibule::*;
 
-fn main ()
-  -> ::std::io::Result<()>
-{
-    let casper = ghost!({
-        let foo = ::std::fs::File::open("/the/door")?;
-    });
-    async {
-        let in_the_shell = ghost!({
-            let bar = example().await;
+    fn main ()
+      -> ::std::io::Result<()>
+    {
+        let casper = ghost!({
+            let foo = ::std::fs::File::open("/the/door")?;
         });
-    };
-    Ok(())
-}
+        async {
+            let in_the_shell = ghost!({
+                let bar = example().await;
+            });
+        };
+        Ok(())
+    }
 
-async
-fn example ()
-{
-    // …
-}
-``` */
+    async
+    fn example ()
+    {
+        // …
+    }
+    ``` */
 ///
 /// ### `break` and `continue` work inside it (labelled and unlabelled):
 ///
-/** ```rust
-use ::ghosts::vestibule::*;
+/**  - ```rust
+    use ::ghosts::vestibule::*;
 
-let _: i32 = loop {
-    let casper = ghost!({
-        break 42;
-    });
-    break 0;
-};
-``` */
+    let _: i32 = loop {
+        let casper = ghost!({
+            break 42;
+        });
+        break 0;
+    };
+    ``` */
 ///
 /// ### `ghost!` expressions consume ownership of their captures…
 ///
-/** ```rust ,compile_fail
-use ::ghosts::vestibule::*;
+/**  - ```rust ,compile_fail
+    use ::ghosts::vestibule::*;
 
-let owned = String::from("…");
-let casper = ghost!(owned);
-drop(owned); // Error, use of moved value
-``` */
+    let owned = String::from("…");
+    let casper = ghost!(owned);
+    drop(owned); // Error, use of moved value
+    ``` */
 ///
 ///   - (note: once in the Ghost Realm™, things stay there. There is no way for
 ///     ownership relinquished over the Ghost Realm™ to ever be claimed back
@@ -220,15 +224,15 @@ drop(owned); // Error, use of moved value
 ///
 /// ### … unless the `#[no_init]` opt-out is used
 ///
-/** ```rust
-use ::ghosts::vestibule::*;
+/**  - ```rust
+    use ::ghosts::vestibule::*;
 
-let owned = String::from("…");
-let casper = ghost!(#[no_init] {
-    owned
-});
-drop(owned); // Ok
-``` */
+    let owned = String::from("…");
+    let casper = ghost!(#[no_init] {
+        owned
+    });
+    drop(owned); // Ok
+    ``` */
 #[macro_export]
 macro_rules! ghost {
     ( $($_:tt)* ) => (
